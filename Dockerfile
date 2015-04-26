@@ -10,6 +10,8 @@ RUN apt-get install nginx -y
 
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
   chown -R www-data:www-data /var/lib/nginx
+RUN sed "s/access_log\s*[^;]*/access_log \/dev\/stdout/g" -i /etc/nginx/nginx.conf
+RUN sed "s/error_log\s*[^;]*/error_log \/dev\/stdout/g" -i /etc/nginx/nginx.conf
 
 ADD /server.conf /etc/nginx/sites-available/pixelserv
 RUN ln -s /etc/nginx/sites-available/pixelserv /etc/nginx/sites-enabled/pixelserv
