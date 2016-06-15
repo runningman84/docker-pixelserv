@@ -1,12 +1,13 @@
 FROM ubuntu:trusty
 MAINTAINER Philipp Hellmich <phil@hellmi.de>
 
-# system update
-RUN apt-get update -y
-RUN apt-get upgrade -y
-RUN apt-get clean -y
-# tools
-RUN apt-get install nginx -y
+# Set the debconf frontend to Noninteractive
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+# install
+RUN apt-get update && \
+  apt-get -y install nginx && \
+  rm -rf /var/lib/apt/lists/*
 
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
   chown -R www-data:www-data /var/lib/nginx
@@ -24,7 +25,7 @@ RUN apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 WORKDIR /etc/nginx
 
 # Define default command.
-CMD ["nginx"]
+CMD ["/usr/sbin/nginx"]
 
 # Expose ports.
 EXPOSE 80
