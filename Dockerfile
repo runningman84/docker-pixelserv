@@ -1,8 +1,10 @@
-FROM ubuntu:trusty
+FROM ubuntu:18.04
 MAINTAINER Philipp Hellmich <phil@hellmi.de>
 
 # Set the debconf frontend to Noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.1.0/dumb-init_1.1.0_amd64.deb && dpkg -i dumb-init_*.deb && rm dumb-init_*.deb
 
 # install
 RUN apt-get update && \
@@ -17,9 +19,6 @@ RUN sed "s/error_log\s*[^;]*/error_log \/dev\/stdout/g" -i /etc/nginx/nginx.conf
 ADD /server.conf /etc/nginx/sites-available/pixelserv
 RUN ln -s /etc/nginx/sites-available/pixelserv /etc/nginx/sites-enabled/pixelserv
 RUN rm /etc/nginx/sites-enabled/default
-
-# Clean up APT when done.
-RUN apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Define working directory.
 WORKDIR /etc/nginx
